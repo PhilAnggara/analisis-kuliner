@@ -1,0 +1,15 @@
+/* 34E0A1 */
+/* 484c7f */
+
+[class="theme-indigo"] {
+  --primary-color: #339470;
+  --secondary-color: #f19828;
+  --chart-color1: #339470;
+  --chart-color2: #f19828;
+  --chart-color3: #f5558d;
+  --chart-color4: #a7daff;
+  --chart-color5: #9cbf3b;
+  --chart-color6: #a0c1b8;
+  --chart-color7: #64868e;
+  --primary-gradient: linear-gradient(45deg, #f5558d, #ff1843);
+}
