@@ -25,23 +25,35 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
-                  <th>Restaurant</th>
+                  {{-- <th>Rating</th>
+                  <th>Restaurant</th> --}}
                   <th>Ulasan</th>
+                  <th>Sentimen</th>
                 </tr>
               </thead>
               <tbody>
                 @foreach ($items as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item->date }}</td>
                     <td>{{ $item->name }}</td>
-                    <td>
+                    {{-- <td>
                       <i class="fa-solid fa-star text-warning"></i>
                       {{ $item->rating }}
                     </td>
-                    <td>{{ $item->restaurant }}</td>
+                    <td>{{ $item->restaurant }}</td> --}}
                     <td class="text-start">{{ $item->review }}</td>
+                    <td>
+                      @if ($item->rating < 3)
+                        <span class="badge rounded-pill bg-danger">Negatif</span>
+                      @elseif ($item->rating == 3)
+                        <span class="badge rounded-pill bg-light text-dark">Netral</span>
+                      @else
+                        <span class="badge rounded-pill bg-success">Positif</span>
+                      @endif
+                    </td>
                   </tr>
                 @endforeach
               </tbody>
