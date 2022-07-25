@@ -18,9 +18,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('preprocessing', [MainController::class, 'preprocessing'])->name('preprocessing');
 Route::get('/', [MainController::class, 'dataTraining'])->name('data-training');
 Route::prefix('single')->group(function () {
-  Route::get('manual', [MainController::class, 'dataTraining'])->name('manual');
-  Route::get('otomatis', [MainController::class, 'preprocessing'])->name('otomatis');
+  Route::get('manual', [MainController::class, 'manual'])->name('manual');
+  Route::get('otomatis', [MainController::class, 'otomatis'])->name('otomatis');
+  // Route::get('otomatis', [MainController::class, 'preprocessing'])->name('otomatis');
 });
-Route::get('multiple', [MainController::class, 'dataTraining'])->name('multiple');
+Route::get('multiple', [MainController::class, 'multiple'])->name('multiple');
 
 Route::get('scraping', [MainController::class, 'scraping'])->name('scraping');

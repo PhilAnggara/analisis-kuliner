@@ -17,6 +17,25 @@ class MainController extends Controller
             'items' => $items,
         ]);
     }
+
+    public function manual()
+    {
+        return view('pages.manual');
+    }
+
+    public function otomatis()
+    {
+        return view('pages.otomatis');
+    }
+
+    public function multiple()
+    {
+        return view('pages.multiple');
+    }
+
+
+
+    
     public function crawling()
     {
         return view('pages.crawling');
