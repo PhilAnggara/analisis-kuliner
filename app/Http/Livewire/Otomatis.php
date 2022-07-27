@@ -28,6 +28,8 @@ class Otomatis extends Component
     public $termFrequency;
     public $inverseDocumentFrequency;
     public $tfidf;
+    public $kernel;
+    public $hessian;
 
     public function mount()
     {
@@ -72,16 +74,17 @@ class Otomatis extends Component
         // ### TF-IDF ###
         $this->tfidf = MyFunction::tfidf($this->termFrequency, $this->inverseDocumentFrequency);
 
+        // ### Kernel ###
+        $this->kernel = MyFunction::kernel($this->tfidf, MyFunction::getClass($this->reviews));
+
+        // ### Hessian Matrix ###
+        $this->hessian = MyFunction::hessian($this->kernel);
+
         $this->success = true;
     }
 
     public function render()
     {
-        // $selectedCategory = 'jepang';
-        // $jumlahData = 100;
-        // $restaurants = Restaurant::where('categories', 'like', '%'.$selectedCategory.'%')->pluck('name');
-        // $test = Review::whereIn('restaurant', $restaurants)->get()->take($jumlahData);
-        // dd($restaurants, $test);
         return view('livewire.otomatis');
     }
 }

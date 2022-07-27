@@ -17,6 +17,9 @@
                 </select>
                 <select wire:model="amount" class="form-select bg-transparent" required>
                   <option value="" selected disabled>-- Jumlah data --</option>
+                  <option>5</option>
+                  <option>10</option>
+                  <option>20</option>
                   <option>50</option>
                   <option>100</option>
                   <option>200</option>
@@ -44,8 +47,8 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
                   <th>Restaurant</th>
                   <th>Ulasan</th>
                 </tr>
@@ -54,11 +57,8 @@
                 @foreach ($reviews as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item['rating'] }}
-                    </td>
                     <td>{{ $item['restaurant'] }}</td>
                     <td class="text-start">{{ $item['review'] }}</td>
                   </tr>
@@ -72,14 +72,159 @@
     <div class="row">
       <div class="col-12">
         <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Pre Processing</h5>
+          <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+              <button class="nav-link fw-bold active" data-bs-toggle="tab" data-bs-target="#tab-1" type="button">Case Folding</button>
+              <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-2" type="button">Tokenizing</button>
+              <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-3" type="button">Filteringg</button>
+              <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-4" type="button">Stemming</button>
+            </div>
+          </nav>
+          <div class="card-body">
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade show active" id="tab-1">
+                <table class="table table-hover align-middle text-center" id="caseFolding">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Waktu</th>
+                      <th>Nama</th>
+                      <th>Restaurant</th>
+                      <th>Ulasan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($case_folding as $item)
+                      <tr>
+                        <th>{{ $loop->iteration }}</th>
+                        <td class="text-nowrap">{{ $item['date'] }}</td>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['restaurant'] }}</td>
+                        <td class="text-start">{{ $item['review'] }}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="tab-2">
+                <table class="table table-hover align-middle text-center" id="tokenizing">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Waktu</th>
+                      <th>Nama</th>
+                      <th>Restaurant</th>
+                      <th>Ulasan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($tokenizing as $item)
+                      <tr>
+                        <th>{{ $loop->iteration }}</th>
+                        <td class="text-nowrap">{{ $item['date'] }}</td>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['restaurant'] }}</td>
+                        <td class="text-start">
+                          @foreach ($item['review'] as $ir)
+                            @if ($loop->first)
+                              ['{{ $ir }}',
+                            @elseif ($loop->last)
+                              '{{ $ir }}']
+                            @else
+                              '{{ $ir }}',
+                            @endif
+                          @endforeach
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="tab-3">
+                <table class="table table-hover align-middle text-center" id="filtering">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Waktu</th>
+                      <th>Nama</th>
+                      <th>Restaurant</th>
+                      <th>Ulasan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($filtering as $item)
+                      <tr>
+                        <th>{{ $loop->iteration }}</th>
+                        <td class="text-nowrap">{{ $item['date'] }}</td>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['restaurant'] }}</td>
+                        <td class="text-start">
+                          @foreach ($item['review'] as $ir)
+                            @if ($loop->first)
+                              ['{{ $ir }}',
+                            @elseif ($loop->last)
+                              '{{ $ir }}']
+                            @else
+                              '{{ $ir }}',
+                            @endif
+                          @endforeach
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="tab-4">
+                <table class="table table-hover align-middle text-center" id="stemming">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Waktu</th>
+                      <th>Nama</th>
+                      <th>Restaurant</th>
+                      <th>Ulasan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($stemming as $item)
+                      <tr>
+                        <th>{{ $loop->iteration }}</th>
+                        <td class="text-nowrap">{{ $item['date'] }}</td>
+                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['restaurant'] }}</td>
+                        <td class="text-start">
+                          @foreach ($item['review'] as $ir)
+                            @if ($loop->first)
+                              ['{{ $ir }}',
+                            @elseif ($loop->last)
+                              '{{ $ir }}']
+                            @else
+                              '{{ $ir }}',
+                            @endif
+                          @endforeach
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{-- <div class="row">
+      <div class="col-12">
+        <div class="card mb-4 shadow-sm">
           <h5 class="card-header text-white bg-primary text-center">Case Folding</h5>
           <div class="card-body">
             <table class="table table-hover align-middle text-center" id="caseFolding">
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
                   <th>Restaurant</th>
                   <th>Ulasan</th>
                 </tr>
@@ -88,11 +233,8 @@
                 @foreach ($case_folding as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item['rating'] }}
-                    </td>
                     <td>{{ $item['restaurant'] }}</td>
                     <td class="text-start">{{ $item['review'] }}</td>
                   </tr>
@@ -112,8 +254,8 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
                   <th>Restaurant</th>
                   <th>Ulasan</th>
                 </tr>
@@ -122,11 +264,8 @@
                 @foreach ($tokenizing as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item['rating'] }}
-                    </td>
                     <td>{{ $item['restaurant'] }}</td>
                     <td class="text-start">
                       @foreach ($item['review'] as $ir)
@@ -156,8 +295,8 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
                   <th>Restaurant</th>
                   <th>Ulasan</th>
                 </tr>
@@ -166,11 +305,8 @@
                 @foreach ($filtering as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item['rating'] }}
-                    </td>
                     <td>{{ $item['restaurant'] }}</td>
                     <td class="text-start">
                       @foreach ($item['review'] as $ir)
@@ -200,8 +336,8 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Waktu</th>
                   <th>Nama</th>
-                  <th>Rating</th>
                   <th>Restaurant</th>
                   <th>Ulasan</th>
                 </tr>
@@ -210,11 +346,8 @@
                 @foreach ($stemming as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
                     <td>{{ $item['name'] }}</td>
-                    <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item['rating'] }}
-                    </td>
                     <td>{{ $item['restaurant'] }}</td>
                     <td class="text-start">
                       @foreach ($item['review'] as $ir)
@@ -234,7 +367,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> --}}
     <div class="row">
       <div class="col-12">
         <div class="card mb-4 shadow-sm">
@@ -336,6 +469,98 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Kernel</h5>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle text-center" id="kernel">
+                <thead>
+                  <tr>
+                    <th></th>
+                    @foreach ($kernel as $item)
+                      <th>D{{ $loop->iteration }}</th>
+                    @endforeach
+                    <th>Kelas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($kernel as $item)
+                    <tr>
+                      <th>D{{ $loop->iteration }}</th>
+                      @foreach ($item['data'] as $i)
+                        @if ($i == 0)
+                          <td>0</td>
+                        @else
+                          <td>{{ number_format($i, 5, '.', '') }}</td>
+                        @endif
+                      @endforeach
+                      <th>{{ $item['kelas'] }}</th>
+                    </tr>
+                  @endforeach
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Kelas</th>
+                    @foreach ($kernel as $item)
+                      <th>{{ $item['kelas'] }}</th>
+                    @endforeach
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Hessian Matrix</h5>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle text-center" id="hessian">
+                <thead>
+                  <tr>
+                    <th></th>
+                    @foreach ($hessian as $item)
+                      <th>D{{ $loop->iteration }}</th>
+                    @endforeach
+                    <th>Kelas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($hessian as $item)
+                    <tr>
+                      <th>D{{ $loop->iteration }}</th>
+                      @foreach ($item['data'] as $i)
+                        @if ($i == 0)
+                          <td>0</td>
+                        @else
+                          <td>{{ number_format($i, 5, '.', '') }}</td>
+                        @endif
+                      @endforeach
+                      <th>{{ $item['kelas'] }}</th>
+                    </tr>
+                  @endforeach
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Kelas</th>
+                    @foreach ($hessian as $item)
+                      <th>{{ $item['kelas'] }}</th>
+                    @endforeach
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
   @endif
 
@@ -361,6 +586,11 @@
       $('#termFrequency').DataTable(tableConfiguration);
       $('#inverseDocumentFrequency').DataTable(tableConfiguration);
       $('#tfidf').DataTable(tableConfiguration);
+      $('#kernel').DataTable(tableConfiguration);
+      $('#hessian').DataTable(tableConfiguration);
+    });
+    $(document).on('shown.bs.tab', 'button[data-bs-toggle="tab"]', function (e) {
+      $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
     });
   </script>
   

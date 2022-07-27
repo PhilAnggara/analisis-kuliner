@@ -157,9 +157,73 @@ class MyFunction
             }
             $result->push([  // push data hasil tf-idf ke variabel tfidf
                 'kata' => $item['kata'],
-                'data' => $tempData
+                'data' => $tempData,
             ]);
             $loopIndex++;
+        }
+
+        return $result;
+    }
+
+    public static function getClass($reviews)
+    {
+        $result = collect();
+        foreach ($reviews as $item) {
+            if ($item->rating < 3) {
+                $result->push(-1);
+            } elseif ($item->rating == 3) {
+                $result->push(0);
+            } else {
+                $result->push(1);
+            }
+        }
+
+        return $result;
+    }
+
+    public static function kernel($tfidf, $class)
+    {
+        $count = $tfidf->first()['data']->count();  // variable untk menyimpan jumlah data review
+        $result = collect();    // buat variable untk menampung data kernel
+
+        for ($i=0; $i < $count; $i++) {     // looping sesuai jumlah data review
+            $sum = collect();  // buat variable untk menampung data sementara kernel dari setiap kata
+            for ($j=0; $j < $count; $j++) {     // looping sesuai jumlah data review untuk dikalikan
+                $tempData = collect();   // buat variable untk menampung data sementara hasil perkalian
+                foreach ($tfidf as $item) {     // looping semua data tf-idf dari setiap kata
+                    $tempData->push(     // push data hasil perkalian ke variabel sum
+                        $item['data'][$i] * $item['data'][$j]
+                    );
+                }
+                $sum->push($tempData->sum());
+            }
+            $result->push([
+                'D' => 'D'.$i+1,
+                'data' => $sum,
+                'kelas' => $class[$i],
+            ]);
+        }
+
+        return $result;
+    }
+
+    public static function hessian($kernel)
+    {
+        $result = collect();    // buat variable untk menampung data hesian matrix
+        foreach ($kernel as $item) {     // looping semua data kernel
+            $tempData = collect();
+            $loopIndex = 0;
+            foreach ($item['data'] as $i) {
+                $tempData->push(
+                    $item['kelas'] * $kernel[$loopIndex]['kelas'] * ($i + pow(0.5, 2))
+                );
+                $loopIndex++;
+            }
+            $result->push([
+                'D' => $item['D'],
+                'data' => $tempData,
+                'kelas' => $item['kelas'],
+            ]);
         }
 
         return $result;

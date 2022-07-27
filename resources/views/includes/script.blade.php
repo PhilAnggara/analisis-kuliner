@@ -4,4 +4,6 @@
 
 <script src="{{ url('frontend/assets/js/template.js') }}"></script>
 
+<script src="{{ url('frontend/vendors/apexcharts/apexcharts.js') }}"></script>
+
 <script src="{{ url('frontend/scripts/main.js') }}"></script>

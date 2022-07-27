@@ -10,7 +10,7 @@
         <div class="card border-0 border-bottom bg-transparent">
           <div class="card-body px-0">
             <h3 class="fw-bold">Manual</h3>
-            <h6 class="card-subtitle text-muted">Subtitle</h6>
+            {{-- <h6 class="card-subtitle text-muted">Subtitle</h6> --}}
           </div>
         </div>
       </div>
