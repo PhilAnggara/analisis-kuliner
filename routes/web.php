@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', [MainController::class, 'crawling'])->name('crawling');
-// Route::get('preprocessing', [MainController::class, 'preprocessing'])->name('preprocessing');
 Route::get('/', [MainController::class, 'dataTraining'])->name('data-training');
 Route::prefix('single')->group(function () {
   Route::get('manual', [MainController::class, 'manual'])->name('manual');
   Route::get('otomatis', [MainController::class, 'otomatis'])->name('otomatis');
-  // Route::get('otomatis', [MainController::class, 'preprocessing'])->name('otomatis');
 });
 Route::get('multiple', [MainController::class, 'multiple'])->name('multiple');
 
 Route::get('scraping', [MainController::class, 'scraping'])->name('scraping');
+
+// Testing needs
+Route::get('testing', [MainController::class, 'testing'])->name('testing');

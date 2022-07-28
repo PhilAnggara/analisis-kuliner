@@ -169,9 +169,9 @@ class MyFunction
     {
         $result = collect();
         foreach ($reviews as $item) {
-            if ($item->rating < 3) {
+            if ($item['rating'] < 3) {
                 $result->push(-1);
-            } elseif ($item->rating == 3) {
+            } elseif ($item['rating'] == 3) {
                 $result->push(0);
             } else {
                 $result->push(1);
@@ -223,6 +223,27 @@ class MyFunction
                 'D' => $item['D'],
                 'data' => $tempData,
                 'kelas' => $item['kelas'],
+            ]);
+        }
+
+        return $result;
+    }
+
+    
+
+    public static function manualStemming($file)
+    {
+        $jsonData = collect(json_decode(file_get_contents(storage_path('/app/public/json/'.$file.'.json'), true)));
+        $result = collect();
+        foreach ($jsonData as $item) {
+            $result->push([
+                'name' => $item->name,
+                'date' => $item->date,
+                'restaurant' => $item->restaurant,
+                'address' => $item->address,
+                'rating' => $item->rating,
+                'quote' => $item->quote,
+                'review' => $item->review,
             ]);
         }
 

@@ -75,7 +75,7 @@ class Otomatis extends Component
         $this->tfidf = MyFunction::tfidf($this->termFrequency, $this->inverseDocumentFrequency);
 
         // ### Kernel ###
-        $this->kernel = MyFunction::kernel($this->tfidf, MyFunction::getClass($this->reviews));
+        $this->kernel = MyFunction::kernel($this->tfidf, MyFunction::getClass($this->stemming));
 
         // ### Hessian Matrix ###
         $this->hessian = MyFunction::hessian($this->kernel);
