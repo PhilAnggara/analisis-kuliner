@@ -139,7 +139,7 @@ class MyFunction
             $result->push([    // push data term frequency (tf) ke inverse document frequency (idf)
                 'kata' => $item['kata'],
                 'df' => array_sum($item['data']->toArray()),
-                'idf' => log(count($stemming) / array_sum($item['data']->toArray())),     // idf = log(N/df)
+                'idf' => log(count($stemming) / array_sum($item['data']->toArray()), 10),     // idf = log(N/df)
             ]);
         }
 
@@ -228,23 +228,38 @@ class MyFunction
 
         return $result;
     }
-
     
-
-    public static function manualStemming($file)
+    public static function error($hessian)
     {
-        $jsonData = collect(json_decode(file_get_contents(storage_path('/app/public/json/'.$file.'.json'), true)));
         $result = collect();
-        foreach ($jsonData as $item) {
-            $result->push([
-                'name' => $item->name,
-                'date' => $item->date,
-                'restaurant' => $item->restaurant,
-                'address' => $item->address,
-                'rating' => $item->rating,
-                'quote' => $item->quote,
-                'review' => $item->review,
-            ]);
+        foreach ($hessian as $item) {
+            $result->push(
+                0.5 * $item['data']->sum()
+            );
+        }
+
+        return $result;
+    }
+    
+    public static function delta($error)
+    {
+        $result = collect();
+        foreach ($error as $item) {
+            $result->push(
+                0.001 * (1 - $item)
+            );
+        }
+
+        return $result;
+    }
+    
+    public static function alpha($delta)
+    {
+        $result = collect();
+        foreach ($delta as $item) {
+            $result->push(
+                0.5 + $item
+            );
         }
 
         return $result;

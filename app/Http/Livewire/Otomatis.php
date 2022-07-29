@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Helpers\MyFunction;
+use App\Helpers\TestingFunction;
 use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\Review;
@@ -30,6 +31,10 @@ class Otomatis extends Component
     public $tfidf;
     public $kernel;
     public $hessian;
+
+    public $error;
+    public $delta;
+    public $alpha;
 
     public function mount()
     {
@@ -79,6 +84,10 @@ class Otomatis extends Component
 
         // ### Hessian Matrix ###
         $this->hessian = MyFunction::hessian($this->kernel);
+
+        $this->error = MyFunction::error($this->hessian);
+        $this->delta = MyFunction::delta($this->error);
+        $this->alpha = MyFunction::alpha($this->delta);
 
         $this->success = true;
     }

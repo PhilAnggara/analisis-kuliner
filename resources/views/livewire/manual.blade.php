@@ -8,7 +8,7 @@
           <form wire:submit.prevent="process">
             <div class="row mb-3">
               <div class="col">
-                <textarea wire:model="review" class="form-control bg-transparent" placeholder="Masuka komentar..." rows="3" required></textarea>
+                <textarea wire:model="review" class="form-control bg-transparent" placeholder="Masukan komentar..." rows="3" required></textarea>
               </div>
             </div>
             <div class="d-flex justify-content-end">

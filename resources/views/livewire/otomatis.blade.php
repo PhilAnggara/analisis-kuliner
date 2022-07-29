@@ -560,6 +560,99 @@
           </div>
         </div>
       </div>
+      <div class="col-4">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Nilai Eror</h5>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle text-center" id="eror">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Nilai Eror</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($error as $item)
+                    <tr>
+                      <th>D{{ $loop->iteration }}</th>
+                      <td>{{ number_format($item, 5, '.', '') }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th></th>
+                    <th>Nilai Eror</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Delta</h5>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle text-center" id="delta">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Delta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($delta as $item)
+                    <tr>
+                      <th>D{{ $loop->iteration }}</th>
+                      <td>{{ number_format($item, 5, '.', '') }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th></th>
+                    <th>Delta</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Alpha</h5>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle text-center" id="alpha">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Alpha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($alpha as $item)
+                    <tr>
+                      <th>D{{ $loop->iteration }}</th>
+                      <td>{{ number_format($item, 5, '.', '') }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th></th>
+                    <th>Alpha</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
   @endif
@@ -588,6 +681,9 @@
       $('#tfidf').DataTable(tableConfiguration);
       $('#kernel').DataTable(tableConfiguration);
       $('#hessian').DataTable(tableConfiguration);
+      $('#eror').DataTable(tableConfiguration);
+      $('#delta').DataTable(tableConfiguration);
+      $('#alpha').DataTable(tableConfiguration);
     });
     $(document).on('shown.bs.tab', 'button[data-bs-toggle="tab"]', function (e) {
       $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();

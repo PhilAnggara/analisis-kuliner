@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\MyFunction;
+use App\Helpers\TestingFunction;
 use App\Models\Restaurant;
 use App\Models\Review;
 use Goutte\Client;
@@ -53,15 +54,25 @@ class MainController extends Controller
         // $d3 = -1 * 1 * (0.026361 + (0.5*0.5));
         // dd($d3);
 
-        $stemming = MyFunction::manualStemming('stemmed_2');
+        $reviews = Review::all()->take(10);
+        $case_folding = MyFunction::caseFolding($reviews);
+        $tokenizing = MyFunction::tokenizing($case_folding);
+        $filtering = MyFunction::filtering($tokenizing);
+
+        $stemming = MyFunction::stemming($filtering);
 
         $words = MyFunction::getWords($stemming);
         $termFrequency = MyFunction::tf($words, $stemming);
         $inverseDocumentFrequency = MyFunction::idf($termFrequency, $stemming);
         $tfidf = MyFunction::tfidf($termFrequency, $inverseDocumentFrequency);
+        
         $kernel = MyFunction::kernel($tfidf, MyFunction::getClass($stemming));
         $hessian = MyFunction::hessian($kernel);
+        
+        $error = MyFunction::error($hessian);
+        $delta = MyFunction::delta($error);
+        $aplha = MyFunction::alpha($delta);
 
-        return response()->json($hessian);
+        return response()->json([$error, $delta ,$aplha]);
     }
 }
