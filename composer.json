@@ -12,6 +12,7 @@
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.10",
+        "php-ai/php-ml": "^0.4.1",
         "sastrawi/sastrawi": "^1.2",
         "weidner/goutte": "^2.2"
     },
