@@ -9,6 +9,11 @@ use App\Models\Review;
 use Goutte\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Phpml\Classification\SVC;
+use Phpml\FeatureExtraction\TfIdfTransformer;
+use Phpml\FeatureExtraction\TokenCountVectorizer;
+use Phpml\SupportVectorMachine\Kernel;
+use Phpml\Tokenization\WhitespaceTokenizer;
 
 class MainController extends Controller
 {
@@ -43,36 +48,86 @@ class MainController extends Controller
 
     public function testing()
     {
-        // // Kernel
-        // $d1 = (0.079181 * 0.079181) + (-0.06695 * -0.06695);
-        // dd($d1);
+        $total = 200;
+        $trainNumber = $total -1;
 
+        $reviews = Review::all()->take($total);
+        $case_folding = MyFunction::caseFolding($reviews);
+        $tokenizing = MyFunction::tokenizing($case_folding);
+        $filtering = MyFunction::filtering($tokenizing);
 
-        // // Matrix Hessian
-        // $d1 = 1 * 1 * (3.887122 + (0.5*0.5));
-        // $d2 = 1 * 0 * (0.030843 + (0.5*0.5));
-        // $d3 = -1 * 1 * (0.026361 + (0.5*0.5));
-        // dd($d3);
+        $stemming = MyFunction::stemming($filtering);
+        $stemming = TestingFunction::readJson('stemmed_3');
 
+        $samples = [];
+        foreach ($stemming as $item) {
+            $sentence = implode(' ', $item['review']);
+            $samples[] = $sentence;
+        }
+        $labels = MyFunction::getClass($stemming)->toArray();
+
+        // Token Count Vectorizer
+        $vectorizer = new TokenCountVectorizer(new WhitespaceTokenizer());
+        $vectorizer->fit($samples);
+        $vectorizer->transform($samples);
+
+        // Tf-idf Transformer
+        $transformer = new TfIdfTransformer($samples);
+        $transformer->transform($samples);
+
+        // SVC
+        $training = collect($samples)->take($trainNumber)->toArray();
+        $labels = collect($labels)->take($trainNumber)->toArray();
+        $testing = last($samples);
+
+        $classifier = new SVC(Kernel::LINEAR, $cost = 1000);
+        $classifier->train($training, $labels);
+
+        $test = $classifier->predict([
+            $testing
+        ]);
+
+        dd($test);
+    }
+
+    public function testing1()
+    {
         $reviews = Review::all()->take(10);
         $case_folding = MyFunction::caseFolding($reviews);
         $tokenizing = MyFunction::tokenizing($case_folding);
         $filtering = MyFunction::filtering($tokenizing);
 
         $stemming = MyFunction::stemming($filtering);
+        // $stemming = TestingFunction::readJson('stemmed_3');
 
         $words = MyFunction::getWords($stemming);
+
         $termFrequency = MyFunction::tf($words, $stemming);
+        // $termFrequency = TestingFunction::tf($words, $stemming);
+
         $inverseDocumentFrequency = MyFunction::idf($termFrequency, $stemming);
         $tfidf = MyFunction::tfidf($termFrequency, $inverseDocumentFrequency);
-        
         $kernel = MyFunction::kernel($tfidf, MyFunction::getClass($stemming));
         $hessian = MyFunction::hessian($kernel);
-        
         $error = MyFunction::error($hessian);
         $delta = MyFunction::delta($error);
-        $aplha = MyFunction::alpha($delta);
+        $alpha = MyFunction::alpha($delta);
 
-        return response()->json([$error, $delta ,$aplha]);
+        return view('pages.testing', [
+            'reviews' => $reviews,
+            'case_folding' => $case_folding,
+            'tokenizing' => $tokenizing,
+            'filtering' => $filtering,
+            'stemming' => $stemming,
+            'words' => $words,
+            'termFrequency' => $termFrequency,
+            'inverseDocumentFrequency' => $inverseDocumentFrequency,
+            'tfidf' => $tfidf,
+            'kernel' => $kernel,
+            'hessian' => $hessian,
+            'error' => $error,
+            'delta' => $delta,
+            'alpha' => $alpha,
+        ]);
     }
 }
