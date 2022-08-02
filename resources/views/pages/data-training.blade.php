@@ -46,12 +46,12 @@
                     <td>{{ $item->restaurant }}</td> --}}
                     <td class="text-start">{{ $item->review }}</td>
                     <td>
-                      @if ($item->rating < 3)
-                        <span class="badge rounded-pill bg-danger">Negatif</span>
-                      @elseif ($item->rating == 3)
+                      @if ($item->rating > 4)
+                        <span class="badge rounded-pill bg-success">Positif</span>
+                      @elseif ($item->rating == 4)
                         <span class="badge rounded-pill bg-light text-dark">Netral</span>
                       @else
-                        <span class="badge rounded-pill bg-success">Positif</span>
+                        <span class="badge rounded-pill bg-danger">Negatif</span>
                       @endif
                     </td>
                   </tr>

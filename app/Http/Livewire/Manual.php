@@ -33,13 +33,17 @@ class Manual extends Component
 
     public function process()
     {
+        // ### Case Folding ###
         $this->case_folding = Str::lower($this->review);
 
+        // ### Tokenizing ###
         $this->tokenizing = explode(' ', preg_replace("#[[:punct:]]#", "", $this->case_folding));
 
+        // ### Filtering ###
         $stopwords = json_decode(file_get_contents(storage_path('/app/public/json/stopwords.json'), true));
         $this->filtering = array_diff($this->tokenizing,$stopwords);
         
+        // ### Stemming ###
         $stemmerFactory = new StemmerFactory();
         $stemmer = $stemmerFactory->createStemmer();
         $sentence = implode(' ', $this->filtering);
@@ -53,9 +57,9 @@ class Manual extends Component
 
     public function svm($input)
     {
-        $positif = Review::where('rating', '>', 3)->get()->take(300);
-        $netral = Review::where('rating', '=', 3)->get()->take(300);
-        $negatif = Review::where('rating', '<', 3)->get()->take(300);
+        $positif = Review::where('rating', '>', 3)->get()->take(300);   // 300 data positif
+        $netral = Review::where('rating', '=', 3)->get()->take(300);    // 300 data netral
+        $negatif = Review::where('rating', '<', 3)->get()->take(300);   // 300 data negatif
 
         $this->dataTraining = collect([
             'positif' => $positif,
@@ -63,29 +67,20 @@ class Manual extends Component
             'negatif' => $negatif,
         ]);
 
-        $reviews = collect();
-        $positif = $positif->each(function ($item) use ($reviews) {
-            $reviews->push($item);
-        });
-        $netral = $netral->each(function ($item) use ($reviews) {
-            $reviews->push($item);
-        });
-        $negatif = $negatif->each(function ($item) use ($reviews) {
-            $reviews->push($item);
-        });
+        $reviews = collect()->merge($positif)->merge($netral)->merge($negatif);     // menggabungkan semua data positif, netral, negatif
         
         $case_folding = MyFunction::caseFolding($reviews);
         $tokenizing = MyFunction::tokenizing($case_folding);
         $filtering = MyFunction::filtering($tokenizing);
         $stemming = MyFunction::stemming($filtering);
 
-        $samples = [];
+        $samples = [];  // array untuk menyimpan data training
         foreach ($stemming as $item) {
-            $sentence = implode(' ', $item['review']);
-            $samples[] = $sentence;
+            $sentence = implode(' ', $item['review']);  // menggabungkan review menjadi satu string
+            $samples[] = $sentence;     // menambahkan string ke array $samples
         }
-        $samples[] = $input;
-        $labels = MyFunction::getClass($stemming)->toArray();
+        $samples[] = $input;    // menambahkan input user ke array $samples
+        $labels = MyFunction::getClass($stemming)->toArray();   // mengambil label dari data training
 
         // Token Count Vectorizer
         $vectorizer = new TokenCountVectorizer(new WhitespaceTokenizer());
@@ -97,13 +92,13 @@ class Manual extends Component
         $transformer->transform($samples);
 
         // Support Vector Classification
-        $training = collect($samples)->take($reviews->count())->toArray();
-        $testing = last($samples);
+        $training = collect($samples)->take($reviews->count())->toArray();  // mengambil data training selain input user
+        $testing = last($samples);  // mengambil data testing yang berisi input user
 
         $classifier = new SVC(Kernel::LINEAR, $cost = 1000);
-        $classifier->train($training, $labels);
+        $classifier->train($training, $labels);     // training data
 
-        $result = $classifier->predict($testing);
+        $result = $classifier->predict($testing);   // menghitung prediksi data
 
         return $result;
     }

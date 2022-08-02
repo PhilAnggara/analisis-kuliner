@@ -169,12 +169,12 @@ class MyFunction
     {
         $result = collect();
         foreach ($reviews as $item) {
-            if ($item['rating'] < 3) {
-                $result->push(-1);
-            } elseif ($item['rating'] == 3) {
+            if ($item['rating'] > 4) {
+                $result->push(1);
+            } elseif ($item['rating'] == 4) {
                 $result->push(0);
             } else {
-                $result->push(1);
+                $result->push(-1);
             }
         }
 

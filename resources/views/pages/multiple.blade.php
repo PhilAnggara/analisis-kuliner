@@ -21,3 +21,30 @@
   </div>
 </div>
 @endsection
+
+@push('addon-script')
+  <script>
+    Livewire.on('loadChart', report => {
+      var options = {
+        chart: {
+          type: 'bar'
+        },
+        series: [{
+          name: "%",
+          data: [(report.accuracy*100).toFixed(1), (report.precision*100).toFixed(1), (report.recall*100).toFixed(1), (report.f1score*100).toFixed(1)]
+        }],
+        xaxis: {
+          categories: ['Accuracy','Precision','Recall','F1-Score'],
+        },
+        yaxis: {
+          max: 100,
+        },
+        theme: {
+          palette: 'palette3' // upto palette10
+        }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#chart"), options).render();
+    })
+  </script>
+@endpush

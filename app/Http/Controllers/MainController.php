@@ -46,7 +46,7 @@ class MainController extends Controller
         // return response()->json($this->getReviews());
     }
 
-    public function testing()
+    public function a()
     {
         $total = 200;
         $trainNumber = $total -1;
@@ -88,6 +88,39 @@ class MainController extends Controller
         ]);
 
         dd($test);
+    }
+
+    public function testing()
+    {
+        $total = Review::count();
+
+        $positif = Review::where('rating', '>', 4)->count();
+        $pPositif = $positif / $total * 100;
+        $pPositif = number_format($pPositif, 1);
+        
+        $netral = Review::where('rating', '=', 4)->count();
+        $pNetral = $netral / $total * 100;
+        $pNetral = number_format($pNetral, 1);
+
+        $negatif = Review::where('rating', '<', 4)->count();
+        $pNegatif = $negatif / $total * 100;
+        $pNegatif = number_format($pNegatif, 1);
+
+        return response()->json([
+            'positif' => [
+                'jumlah' => $positif,
+                '%' => $pPositif,
+            ],
+            'netral' => [
+                'jumlah' => $netral,
+                '%' => $pNetral,
+            ],
+            'negatif' => [
+                'jumlah' => $negatif,
+                '%' => $pNegatif,
+            ],
+            'total' => $total,
+        ]);
     }
 
     public function testing1()
