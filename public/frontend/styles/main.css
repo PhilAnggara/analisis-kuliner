@@ -2,9 +2,9 @@
 /* 484c7f */
 
 [class="theme-indigo"] {
-  --primary-color: #004F32;
+  --primary-color: #019e65;
   --secondary-color: #f19828;
-  --chart-color1: #004F32;
+  --chart-color1: #008a57;
   --chart-color2: #f19828;
   --chart-color3: #f5558d;
   --chart-color4: #a7daff;
@@ -12,4 +12,8 @@
   --chart-color6: #a0c1b8;
   --chart-color7: #64868e;
   --primary-gradient: linear-gradient(45deg, #f5558d, #ff1843);
+}
+
+.sidebar .brand-icon .logo-text {
+  font-size: 15px;
 }

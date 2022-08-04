@@ -57,9 +57,9 @@ class Manual extends Component
 
     public function svm($input)
     {
-        $positif = Review::where('rating', '>', 3)->get()->take(300);   // 300 data positif
-        $netral = Review::where('rating', '=', 3)->get()->take(300);    // 300 data netral
-        $negatif = Review::where('rating', '<', 3)->get()->take(300);   // 300 data negatif
+        $positif = Review::where('rating', '>', 4)->get()->take(300);   // 300 data positif
+        $netral = Review::where('rating', '=', 4)->get()->take(300);    // 300 data netral
+        $negatif = Review::where('rating', '<', 4)->get()->take(300);   // 300 data negatif
 
         $this->dataTraining = collect([
             'positif' => $positif,

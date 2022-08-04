@@ -21,3 +21,32 @@
   </div>
 </div>
 @endsection
+
+@push('addon-script')
+  <script>
+    Livewire.on('loadChart', percentage => {
+      var options = {
+        chart: {
+          type: 'donut',
+          width: '100%',
+          height:'400px',
+        },
+        labels: ['Positif', 'Netral', 'Negatif'],
+        series: [percentage.positif, percentage.netral, percentage.negatif],
+        colors:['#00E396', '#dbdbdb', '#FF4560'],
+        legend: {
+          position: 'top'
+        },
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '40%'
+            }
+          }
+        }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#chart"), options).render();
+    })
+  </script>
+@endpush

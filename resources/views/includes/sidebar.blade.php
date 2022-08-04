@@ -4,7 +4,7 @@
       <span class="logo-icon">
         <i class="fal fa-fork-knife fa-2xl"></i>
       </span>
-      <span class="logo-text">Analisis Kuliner</span>
+      <span class="logo-text text-center">Analisis Sentimen Restoran</span>
     </a>
     <ul class="menu-list flex-grow-1 mt-3">
 
