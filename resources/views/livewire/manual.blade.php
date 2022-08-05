@@ -103,7 +103,7 @@
             <h5 class="fst-italic text-muted mb-1">
               Komentar ini dinilai sebagai komentar
             </h5>
-            @if ($result == 1)
+            @if ($result > 0)
               <h3><span class="badge bg-success">Positif</span></h3>
             @elseif ($result == 0)
               <h3><span class="badge bg-light text-dark">Netral</span></h3>

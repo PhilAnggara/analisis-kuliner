@@ -63,13 +63,9 @@ class Multiple extends Component
 
     public function process()
     {
-        $rerstaurant = Restaurant::where('categories', 'like', '%'.$this->selectedCategory.'%')->pluck('name');
-        $positif = Review::whereIn('restaurant', $rerstaurant)->where('rating', '>', 4)->get()->take(round(34 / 100 * $this->amount));
-        $netral = Review::whereIn('restaurant', $rerstaurant)->where('rating', '=', 4)->get()->take(round(33 / 100 * $this->amount));
-        $negatif = Review::whereIn('restaurant', $rerstaurant)->where('rating', '<', 4)->get()->take(round(33 / 100 * $this->amount));
-        $this->reviews = collect()->merge($positif)->merge($netral)->merge($negatif)->shuffle();
-
-        $trainAmount = round($this->partisi / 100 * $this->reviews->count());  // jumlah data training
+        $time_start = microtime(true);
+        $this->reviews = MyFunction::getReviews($this->selectedCategory, $this->amount);
+        $trainAmount = round($this->reviews->count() * $this->partisi / 100);  // jumlah data training
 
         $i = 1;
         foreach ($this->reviews as $review) {
@@ -95,11 +91,7 @@ class Multiple extends Component
         $this->alpha = MyFunction::alpha($this->delta);
 
 
-        $samples = [];  // array untuk menyimpan data training
-        foreach ($this->stemming as $item) {
-            $sentence = implode(' ', $item['review']);  // menggabungkan review menjadi satu string
-            $samples[] = $sentence;     // menambahkan string ke array $samples
-        }
+        $samples = MyFunction::implodeStemming($this->stemming);
         $labels = MyFunction::getClass($this->stemming)->toArray();   // mengambil label dari data training
 
         // Token Count Vectorizer
@@ -112,19 +104,18 @@ class Multiple extends Component
         $transformer->transform($samples);
 
         // Support Vector Classification
-        $training = collect($samples)->take($this->reviews->count() - 5)->toArray();   // memisahkan data training
+        $training = collect($samples)->take($this->reviews->count() - 2)->toArray();   // memisahkan data training
+        $labels = collect($labels)->take($this->reviews->count() - 2)->toArray();      // memisahkan label training
         $testing = array_values(collect($samples)->skip($trainAmount)->toArray());    // memisahkan data testing
-        $labels = collect($labels)->take($this->reviews->count() - 5)->toArray();      // memisahkan label training
 
-        $classifier = new SVC(Kernel::LINEAR, $cost = 1000);
-        $classifier->train($training, $labels);     // training data
-
-        $this->result = $classifier->predict($testing);   // menghitung prediksi data
+        $this->result = MyFunction::svc($training, $labels, $testing);
 
         $actualLabels = MyFunction::getClass($this->stemming->skip($trainAmount))->toArray();   // mengambil label dari data testing
         $predictedLabels = $this->result;
 
-        $accuracy = ['accuracy' => Accuracy::score($actualLabels, $predictedLabels)];;
+        $accuracy = [
+            'accuracy' => Accuracy::score($actualLabels, $predictedLabels)
+        ];
         $report = new ClassificationReport($actualLabels, $predictedLabels);
         $report = $report->getAverage();
         $this->report = array_merge($accuracy, $report);
@@ -133,6 +124,7 @@ class Multiple extends Component
 
         $this->success = true;
         $this->emit('loadChart', $this->report);
+        $this->totalExecutionTime = microtime(true) - $time_start;
     }
 
     public function render()

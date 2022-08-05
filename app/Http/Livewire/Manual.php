@@ -74,11 +74,7 @@ class Manual extends Component
         $filtering = MyFunction::filtering($tokenizing);
         $stemming = MyFunction::stemming($filtering);
 
-        $samples = [];  // array untuk menyimpan data training
-        foreach ($stemming as $item) {
-            $sentence = implode(' ', $item['review']);  // menggabungkan review menjadi satu string
-            $samples[] = $sentence;     // menambahkan string ke array $samples
-        }
+        $samples = MyFunction::implodeStemming($stemming);
         $samples[] = $input;    // menambahkan input user ke array $samples
         $labels = MyFunction::getClass($stemming)->toArray();   // mengambil label dari data training
 
@@ -95,10 +91,7 @@ class Manual extends Component
         $training = collect($samples)->take($reviews->count())->toArray();  // mengambil data training selain input user
         $testing = last($samples);  // mengambil data testing yang berisi input user
 
-        $classifier = new SVC(Kernel::LINEAR, $cost = 1000);
-        $classifier->train($training, $labels);     // training data
-
-        $result = $classifier->predict($testing);   // menghitung prediksi data
+        $result = MyFunction::svc($training, $labels, $testing);
 
         return $result;
     }

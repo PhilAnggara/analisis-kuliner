@@ -20,7 +20,23 @@ class MainController extends Controller
     public function dataTraining()
     {
         $items = Review::all();
+        $items = MyFunction::setClass($items);
+        $ratingCount = [
+            $items->where('rating', 5)->count(),
+            $items->where('rating', 4)->count(),
+            $items->where('rating', 3)->count(),
+            $items->where('rating', 2)->count(),
+            $items->where('rating', 1)->count(),
+        ];
+        $lableCount = [
+            $items->where('rating', 5)->count(),
+            $items->where('rating', 4)->count(),
+            $items->where('rating', 3)->count() + $items->where('rating', 2)->count() + $items->where('rating', 1)->count(),
+        ];
+        // dd($items->take(5));
         return view('pages.data-training', [
+            'ratingCount' => $ratingCount,
+            'lableCount' => $lableCount,
             'items' => $items,
         ]);
     }
@@ -46,7 +62,7 @@ class MainController extends Controller
         // return response()->json($this->getReviews());
     }
 
-    public function a()
+    public function aaaaaaaaa()
     {
         $total = 200;
         $trainNumber = $total -1;

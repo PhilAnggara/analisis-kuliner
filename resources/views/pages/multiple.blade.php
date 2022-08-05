@@ -39,8 +39,14 @@
         yaxis: {
           max: 100,
         },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            distributed: true,
+          }
+        },
         theme: {
-          palette: 'palette3' // upto palette10
+          palette: 'palette1' // upto palette10
         }
       };
 

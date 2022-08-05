@@ -17,6 +17,25 @@
     </div>
 
     <div class="row">
+      <div class="col-6">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Rating</h5>
+          <div class="card-body">
+            <div id="ratingChart"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card mb-4 shadow-sm">
+          <h5 class="card-header text-white bg-primary text-center">Label</h5>
+          <div class="card-body">
+            <div id="labelChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-12">
         <div class="card mb-4 shadow-sm">
           <div class="card-body">
@@ -27,8 +46,8 @@
                   <th>#</th>
                   <th>Waktu</th>
                   <th>Nama</th>
-                  {{-- <th>Rating</th>
-                  <th>Restaurant</th> --}}
+                  <th>Rating</th>
+                  {{-- <th>Restaurant</th> --}}
                   <th>Ulasan</th>
                   <th>Sentimen</th>
                 </tr>
@@ -37,18 +56,18 @@
                 @foreach ($items as $item)
                   <tr>
                     <th>{{ $loop->iteration }}</th>
-                    <td class="text-nowrap">{{ $item->date }}</td>
-                    <td>{{ $item->name }}</td>
-                    {{-- <td>
-                      <i class="fa-solid fa-star text-warning"></i>
-                      {{ $item->rating }}
-                    </td>
-                    <td>{{ $item->restaurant }}</td> --}}
-                    <td class="text-start">{{ $item->review }}</td>
+                    <td class="text-nowrap">{{ $item['date'] }}</td>
+                    <td>{{ $item['name'] }}</td>
                     <td>
-                      @if ($item->rating > 4)
+                      <i class="fa-solid fa-star text-warning"></i>
+                      {{ $item['rating'] }}
+                    </td>
+                    {{-- <td>{{ $item->restaurant }}</td> --}}
+                    <td class="text-start">{{ $item['review'] }}</td>
+                    <td>
+                      @if ($item['class'] > 0)
                         <span class="badge rounded-pill bg-light text-success">Positif</span>
-                      @elseif ($item->rating == 4)
+                      @elseif ($item['class'] == 0)
                         <span class="badge rounded-pill bg-light text-dark">Netral</span>
                       @else
                         <span class="badge rounded-pill bg-light text-danger">Negatif</span>
@@ -70,6 +89,56 @@
 
 @push('addon-script')
   <script>
+    var ratingOptions = {
+      chart: {
+        type: 'bar',
+        height:'400px',
+      },
+      series: [{
+        name: "Jumlah review",
+        data: {!! json_encode($ratingCount) !!}
+      }],
+      xaxis: {
+        categories: ['⭐ 5', '⭐ 4', '⭐ 3', '⭐ 2', '⭐ 1'],
+      },
+      dataLabels: {
+        enabled: false
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          horizontal: true,
+          distributed: true,
+        }
+      },
+      legend: {
+        position: 'top',
+      },
+    }
+
+    var lableOptions = {
+      chart: {
+        type: 'donut',
+        height:'400px',
+      },
+      labels: ['Positif', 'Netral', 'Negatif'],
+      series: {!! json_encode($lableCount) !!},
+      colors:['#26E7A6', '#dbdbdb', '#FF6178'],
+      legend: {
+        position: 'top',
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '40%'
+          }
+        }
+      }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#ratingChart"), ratingOptions).render();
+    var chart = new ApexCharts(document.querySelector("#labelChart"), lableOptions).render();
+
     $(document).ready(function() {
       $('#myTable').DataTable(tableConfiguration);
     });

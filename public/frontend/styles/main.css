@@ -14,6 +14,13 @@
   --primary-gradient: linear-gradient(45deg, #f5558d, #ff1843);
 }
 
+.sidebar {
+  height: calc(100vh - 25px);
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .sidebar .brand-icon .logo-text {
   font-size: 15px;
 }

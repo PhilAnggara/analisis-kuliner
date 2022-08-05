@@ -2,47 +2,88 @@
 
 namespace App\Helpers;
 
+use App\Models\Restaurant;
+use App\Models\Review;
 use Illuminate\Support\Str;
+use Phpml\Classification\SVC;
+use Phpml\SupportVectorMachine\Kernel;
 use Sastrawi\Stemmer\StemmerFactory;
 
 class MyFunction
 {
-    public static function caseFolding($reviews)
+    public static function getReviews($category, $amount)
     {
-        $result = collect();
-        foreach ($reviews as $item) {
-            $result->push([
+        $rerstaurant = Restaurant::where('categories', 'like', '%'.$category.'%')->pluck('name');
+        $positif = Review::whereIn('restaurant', $rerstaurant)->where('rating', '>', 4)->get()->shuffle()->take(round(34 / 100 * $amount));
+        $netral = Review::whereIn('restaurant', $rerstaurant)->where('rating', '=', 4)->get()->shuffle()->take(round(33 / 100 * $amount));
+        $negatif = Review::whereIn('restaurant', $rerstaurant)->where('rating', '<', 4)->get()->shuffle()->take(round(33 / 100 * $amount));
+        $reviews = collect()->merge($positif)->merge($netral)->merge($negatif)->shuffle();
+        $reviews = MyFunction::setClass($reviews);
+
+        return $reviews;
+    }
+
+    public static function setClass($reviews)
+    {
+        $result = $reviews->map(function ($item) {
+            if ($item->rating > 4) {
+                $class = 1;
+            } elseif ($item->rating == 4) {
+                $class = 0;
+            } else {
+                $class = -1;
+            }
+            return [
                 'name' => $item->name,
                 'date' => $item->date,
                 'restaurant' => $item->restaurant,
                 'address' => $item->address,
                 'rating' => $item->rating,
-                'quote' => Str::lower($item->quote),
-                'review' => Str::lower($item->review),
-            ]);
-        }
+                'class' => $class,
+                'quote' => $item->quote,
+                'review' => $item->review,
+            ];
+        });
+
+        return $result;
+    }
+    
+    public static function caseFolding($reviews)
+    {
+        $result = $reviews->map(function ($item) {
+            return [
+                'name' => $item['name'],
+                'date' => $item['date'],
+                'restaurant' => $item['restaurant'],
+                'address' => $item['address'],
+                'rating' => $item['rating'],
+                'class' => $item['class'],
+                'quote' => Str::lower($item['quote']),
+                'review' => Str::lower($item['review']),
+            ];
+        });
 
         return $result;
     }
 
     public static function tokenizing($caseFolding)
     {
-        $result = collect();
-        foreach ($caseFolding as $item) {
+        $result = $caseFolding->map(function ($item) {
 
             $item['quote'] = preg_replace("#[[:punct:]]#", "", $item['quote']);     // hapus tanda baca (., ?, !, :, ;, -, _, etc)
             $item['review'] = preg_replace("#[[:punct:]]#", "", $item['review']);   // hapus tanda baca (., ?, !, :, ;, -, _, etc)
-            
-            $result->push([
+
+            return [
                 'name' => $item['name'],
                 'date' => $item['date'],
                 'restaurant' => $item['restaurant'],
                 'address' => $item['address'],
                 'rating' => $item['rating'],
+                'class' => $item['class'],
                 'quote' => $item['quote'],
                 'review' => explode(' ', $item['review']),  // pisahkan setiap kata dari review menjadi array
-            ]);
-        }
+            ];
+        });
 
         return $result;
     }
@@ -61,6 +102,7 @@ class MyFunction
                 'restaurant' => $item['restaurant'],
                 'address' => $item['address'],
                 'rating' => $item['rating'],
+                'class' => $item['class'],
                 'quote' => $item['quote'],
                 'review' => $item['review'],
             ]);
@@ -86,6 +128,7 @@ class MyFunction
                 'restaurant' => $item['restaurant'],
                 'address' => $item['address'],
                 'rating' => $item['rating'],
+                'class' => $item['class'],
                 'quote' => $item['quote'],
                 'review' => explode(' ', $output),  // pisahkan kembali setiap kata hasil stemming menjadi array
             ]);
@@ -176,7 +219,7 @@ class MyFunction
             } else {
                 $result->push(-1);
             }
-        }
+        }        
 
         return $result;
     }
@@ -263,5 +306,23 @@ class MyFunction
         }
 
         return $result;
+    }
+
+    public static function implodeStemming($stemming)
+    {
+        $result = [];  // array untuk menyimpan data training
+        foreach ($stemming as $item) {
+            $sentence = implode(' ', $item['review']);  // menggabungkan review menjadi satu string
+            $result[] = $sentence;     // menambahkan string ke array $result
+        }
+        return $result;
+    }
+
+    public static function svc($training, $labels, $testing)
+    {
+        $classifier = new SVC(Kernel::LINEAR, $cost = 1000);
+        $classifier->train($training, $labels);     // training data
+
+        return $classifier->predict($testing);   // menghitung prediksi data
     }
 }
